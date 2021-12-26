@@ -13,3 +13,6 @@ test.py
 
 # vscode plugins
 /.history
+
+# environment
+.env

@@ -136,7 +136,7 @@
   # all   = seleciona todos os heróis (independente da barra de stamina)
   # green = seleciona os heróis com a barra de stamina verde (metade ou cheia)
   # full  = seleciona somente os heróis com a barra de stamina cheia
-  select_heroes_mode: "green"
+  select_heroes_mode: "full"
 
   # [en_US] Option for save logs to a file (logs.txt)
   # Default value: False
@@ -146,3 +146,25 @@
   # Valor padrão : False
   # Opções disponíveis: False ou True
   save_log_to_file: True
+
+  # [en_US]
+  # Default value: no
+  # Available options:
+  # all        = notify to all.
+  # no         = not notify.
+  # telegram   = notify to Telegram. 
+  #              get token with @BotFather
+  # line       = notify to Line. 
+  #              get token at https://notify-bot.line.me/en/
+  select_notify: "all"
+
+  # [en_US]
+  # Default value (in minutes): 3
+  time_notify: 3
+
+  # [en_US]
+  # Default value: no
+  # Available options:
+  # True        = Shutdown when found captcha.
+  # False       = Notify to social media. 
+  shutdown_after_captcha: False

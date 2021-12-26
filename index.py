@@ -1,20 +1,27 @@
 # -*- coding: utf-8 -*-    
 from cv2 import cv2
-import simpleaudio
 
 
-from os import listdir
+from os import listdir, getenv, system
 from src.logger import logger, loggerMapClicked
 from random import randint
 from random import random
+from dotenv import load_dotenv
 
 import numpy as np
 import mss
 import pyautogui
 import time
 import sys
-
+import requests
+import telepot
 import yaml
+
+load_dotenv()
+
+LINE_TOKEN = getenv('LINE_TOKEN')
+TELEGRAM_TOKEN = getenv('TELEGRAM_TOKEN')
+TELEGRAM_RECEIVE_ID = getenv('TELEGRAM_RECEIVE_ID')
 
 
 cat = """
@@ -47,10 +54,6 @@ cat = """
 
 print(cat)
 
-
-bell_sound = simpleaudio.WaveObject.from_wave_file("bell.wav")
-
-
 if __name__ == '__main__':
     stream = open("config.yaml", 'r')
     c = yaml.safe_load(stream)
@@ -68,7 +71,7 @@ pyautogui.FAILSAFE = False
 hero_clicks = 0
 login_attempts = 0
 last_log_is_progress = False
-
+last_notify = 0
 
 
 def addRandomness(n, randomn_factor_size=None):
@@ -240,13 +243,59 @@ def getSliderPosition():
     position = [x+w/2,y+h/2]
     return position
 
+def notifyToLine(msg):
+    if not LINE_TOKEN:
+        logger('🔔 Please add line token in .env file!')
+        return False
+    url = 'https://notify-api.line.me/api/notify'
+    token = LINE_TOKEN
+    headers = {'content-type':'application/x-www-form-urlencoded','Authorization':'Bearer '+token}
+
+    r = requests.post(url, headers=headers, data = {'message':msg})
+    r_dict = r.json()
+    # print (r_dict['message'])   
+    return r
+
+def notifyToTelegram(msg):
+    if not TELEGRAM_TOKEN or not TELEGRAM_RECEIVE_ID:
+        logger('🔔 Please add line token in .env file!')
+        return False
+    token = TELEGRAM_TOKEN # telegram token
+    receiver_id = TELEGRAM_RECEIVE_ID # https://api.telegram.org/bot<TOKEN>/getUpdates
+
+    bot = telepot.Bot(token)
+    bot.sendMessage(receiver_id, msg) # send a activation message to telegram receiver id
+
+def notify():
+    if c['shutdown_after_captcha']:
+        logger('🖥️ Shutdown!')
+        system("shutdown /s /t 1")
+        return
+    msg = 'Captcha is showing!'
+    if c['select_notify'] == 'telegram':
+        notifyToTelegram(msg)
+        logger('🔔 Notify to Telegram')
+    elif c['select_notify'] == 'line':
+        notifyToLine(msg)
+        logger('🔔 Notify to Line')
+    elif c['select_notify'] == 'all':
+        notifyToTelegram(msg)
+        notifyToLine(msg)
+        logger('🔔 Notify to Line&Telegram')
+    elif c['select_notify'] == 'no':
+        logger('🔔 Enable notify in config.yaml')
+
 def solveCapcha():
+    global last_notify
     popup_pos = positions(robot)
     if len(popup_pos) == 0:
         return "not-found"
     else:
-        logger('captcha!')
-        bell_sound.play()
+        now = time.time()
+        logger('🔢 Captcha check!')
+        if now - last_notify > c['time_notify']*60:
+            last_notify = now
+            notify()
         time.sleep(6)
         solveCapcha()
 #    #TODO adicionar a funçao de checar se um botao esta visive
