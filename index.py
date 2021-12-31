@@ -286,61 +286,19 @@ def notify():
         logger('🔔 Enable notify in config.yaml')
 
 def solveCapcha():
-    global last_notify
-    popup_pos = positions(robot)
-    if len(popup_pos) == 0:
-        return "not-found"
-    else:
-        now = time.time()
-        logger('🔢 Captcha check!')
-        if now - last_notify > c['time_notify']*60:
-            last_notify = now
-            notify()
-        time.sleep(6)
-        solveCapcha()
-#    #TODO adicionar a funçao de checar se um botao esta visive
-#    # pro bot passar um tempinho fazendo um polling dps q a funçao eh invocada.
-#    logger('🧩 Checking for captcha')
-#    pieces_start_pos = getPiecesPosition()
-#    if pieces_start_pos is None :
-#        return "not-found"
-#    slider_start_pos = getSliderPosition()
-#    if slider_start_pos is None:
-#        logger('🧩 slider_start_pos')
-#        return "fail"
-#
-#    x,y = slider_start_pos
-#    pyautogui.moveTo(x,y,1)
-#    pyautogui.mouseDown()
-#    pyautogui.moveTo(x+300 ,y,0.5)
-#    pieces_end_pos = getPiecesPosition()
-#    if pieces_end_pos is None:
-#        logger('🧩 pieces_end_pos')
-#        return "fail"
-#
-#    piece_start, _, _, _ = getLeftPiece(pieces_start_pos)
-#    piece_end, _, _, _ = getRightPiece(pieces_end_pos)
-#    piece_middle, _, _, _  = getRightPiece(pieces_start_pos)
-#    slider_start, _, = slider_start_pos
-#    slider_end_pos = getSliderPosition()
-#    if slider_end_pos is None:
-#        logger('🧩 slider_end_pos')
-#        return "fail"
-#
-#    slider_end, _ = slider_end_pos
-#
-#    piece_domain = piece_end - piece_start
-#    middle_piece_in_percent = (piece_middle - piece_start)/piece_domain
-#
-#    slider_domain = slider_end - slider_start
-#    slider_awnser = slider_start + (middle_piece_in_percent * slider_domain)
-#    # arr = np.array([[int(piece_start),int(y-20),int(10),int(10)],[int(piece_middle),int(y-20),int(10),int(10)],[int(piece_end-20),int(y),int(10),int(10)],[int(slider_awnser),int(y),int(20),int(20)]])
-#
-#    pyautogui.moveTo(slider_awnser,y,0.5)
-#    pyautogui.mouseUp()
-#
-#    return True
-#    # show(arr)
+    # global last_notify
+    # popup_pos = positions(robot)
+    # if len(popup_pos) == 0:
+    #     return "not-found"
+    # else:
+    #     now = time.time()
+    #     logger('🔢 Captcha check!')
+    #     if now - last_notify > c['time_notify']*60:
+    #         last_notify = now
+    #         notify()
+    #     time.sleep(6)
+    #     solveCapcha()
+    pass
 
 def clickBtn(img,name=None, timeout=3, threshold = ct['default']):
     logger(None, progress_indicator=True)
@@ -617,9 +575,6 @@ def sendHeroesHome():
             print('hero already home, or home full(no dark home button)')
 
 
-
-
-
 def refreshHeroes():
     logger('🏢 Search for heroes to work')
 
@@ -668,9 +623,9 @@ def main():
     while True:
         now = time.time()
 
-        if now - last["check_for_captcha"] > addRandomness(t['check_for_captcha'] * 60):
-            last["check_for_captcha"] = now
-            solveCapcha()
+        # if now - last["check_for_captcha"] > addRandomness(t['check_for_captcha'] * 60):
+        #     last["check_for_captcha"] = now
+        #     solveCapcha()
 
         if now - last["heroes"] > addRandomness(t['send_heroes_for_work'] * 60):
             last["heroes"] = now
